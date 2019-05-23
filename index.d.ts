@@ -163,7 +163,10 @@ declare module "react-native-maps" {
     export interface KmlMapEvent extends NativeSyntheticEvent<{ markers: KmlMarker[] }> {
     }
 
-    type MapTypes = 'standard' | 'satellite' | 'hybrid' | 'terrain' | 'none' | 'mutedStandard';
+    type MapTypes = AndroidMapTypes | IOSMapTypes | 'none';
+
+    type AndroidMapTypes = 'standard' | 'satellite' | 'hybrid' | 'terrain';
+    type IOSMapTypes = 'standard' | 'satellite' | 'hybrid' | 'satelliteFlyover' | 'hybridFlyover' | 'mutedStandard';
 
     export interface MapViewProps extends ViewProperties {
         provider?: 'google' | null;
