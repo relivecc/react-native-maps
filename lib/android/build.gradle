@@ -7,6 +7,7 @@ def DEFAULT_TARGET_SDK_VERSION                = 27
 def DEFAULT_GOOGLE_PLAY_SERVICES_VERSION      = "16.0.1"
 def DEFAULT_GOOGLE_PLAY_SERVICES_MAPS_VERSION = "16.0.0"
 def DEFAULT_ANDROID_MAPS_UTILS_VERSION        = "0.5+"
+def DEFAULT_OSMDROID_VERSION                = "6.0.3"
 
 def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
@@ -49,9 +50,12 @@ dependencies {
   // Variable lookup order : googlePlayServicesMapsVersion > googlePlayServicesVersion > DEFAULT_GOOGLE_PLAY_SERVICES_MAPS_VERSION
   def googlePlayServicesMapsVersion = safeExtGet('googlePlayServicesMapsVersion', safeExtGet('googlePlayServicesVersion', DEFAULT_GOOGLE_PLAY_SERVICES_MAPS_VERSION))
   def androidMapsUtilsVersion = safeExtGet('androidMapsUtilsVersion', DEFAULT_ANDROID_MAPS_UTILS_VERSION)
+  def osmdroidVersion = safeExtGet('osmdroidVersion', DEFAULT_OSMDROID_VERSION)
 
   compileOnly "com.facebook.react:react-native:+"
-  implementation "com.google.android.gms:play-services-base:$googlePlayServicesVersion"
-  implementation "com.google.android.gms:play-services-maps:$googlePlayServicesMapsVersion"
-  implementation "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
+  compileOnly "com.google.android.gms:play-services-base:$googlePlayServicesVersion"
+  compileOnly "com.google.android.gms:play-services-maps:$googlePlayServicesMapsVersion"
+  compileOnly "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
+
+  implementation "org.osmdroid:osmdroid-android:${osmdroidVersion}"
 }

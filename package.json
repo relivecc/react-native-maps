@@ -1,9 +1,9 @@
 {
-  "name": "react-native-maps",
+  "name": "react-native-maps-osmdroid",
   "description": "React Native Mapview component for iOS + Android",
   "main": "index.js",
-  "author": "Leland Richardson <leland.m.richardson@gmail.com>",
-  "version": "0.23.0",
+  "author": "fqborges <fqborges@gmail.com>",
+  "version": "0.23.0-rc2",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "run:packager": "./node_modules/react-native/scripts/packager.sh",
@@ -29,7 +29,9 @@
     "map",
     "mapview",
     "google-maps",
-    "mapkit"
+    "mapkit",
+    "osmdroid",
+    "openstreetmaps"
   ],
   "peerDependencies": {
     "react": ">= 16.0 || < 17.0",
