@@ -36,11 +36,11 @@ declare module "react-native-maps" {
   // helper interface
   export interface MapEvent<T = {}>
     extends NativeSyntheticEvent<
-    T & {
-      coordinate: LatLng;
-      position: Point;
-    }
-    > { }
+      T & {
+        coordinate: LatLng;
+        position: Point;
+      }
+    > {}
 
   export type LineCapType = "butt" | "round" | "square";
   export type LineJoinType = "miter" | "round" | "bevel";
@@ -51,7 +51,7 @@ declare module "react-native-maps" {
 
   interface AnimatedRegionTimingConfig
     extends Animated.AnimationConfig,
-    Partial<Region> {
+      Partial<Region> {
     easing?: (value: number) => number;
     duration?: number;
     delay?: number;
@@ -59,7 +59,7 @@ declare module "react-native-maps" {
 
   interface AnimatedRegionSpringConfig
     extends Animated.AnimationConfig,
-    Partial<Region> {
+      Partial<Region> {
     overshootClamping?: boolean;
     restDisplacementThreshold?: number;
     restSpeedThreshold?: number;
@@ -167,7 +167,7 @@ declare module "react-native-maps" {
    * onKmlReady parameter
    */
   export interface KmlMapEvent
-    extends NativeSyntheticEvent<{ markers: KmlMarker[] }> { }
+    extends NativeSyntheticEvent<{ markers: KmlMarker[] }> {}
 
   type MapTypes =
     | AndroidMapTypes
@@ -281,7 +281,7 @@ declare module "react-native-maps" {
     takeSnapshot(options?: SnapshotOptions): Promise<string>;
   }
 
-  export class MapViewAnimated extends MapView { }
+  export class MapViewAnimated extends MapView {}
 
   // =======================================================================
   //  Marker
@@ -337,7 +337,7 @@ declare module "react-native-maps" {
     animateMarkerToCoordinate(coordinate: LatLng, duration?: number): void;
   }
 
-  export class MarkerAnimated extends Marker { }
+  export class MarkerAnimated extends Marker {}
 
   // =======================================================================
   //  Callout
@@ -348,7 +348,7 @@ declare module "react-native-maps" {
     onPress?: (event: MapEvent<{ action: "callout-press" }>) => void;
   }
 
-  export class Callout extends React.Component<MapCalloutProps, any> { }
+  export class Callout extends React.Component<MapCalloutProps, any> {}
 
   // =======================================================================
   //  Polyline
@@ -371,7 +371,7 @@ declare module "react-native-maps" {
     lineDashPattern?: number[];
   }
 
-  export class Polyline extends React.Component<MapPolylineProps, any> { }
+  export class Polyline extends React.Component<MapPolylineProps, any> {}
 
   // =======================================================================
   //  Polygon
@@ -394,7 +394,7 @@ declare module "react-native-maps" {
     lineDashPattern?: number[];
   }
 
-  export class Polygon extends React.Component<MapPolygonProps, any> { }
+  export class Polygon extends React.Component<MapPolygonProps, any> {}
 
   // =======================================================================
   //  Circle
@@ -415,7 +415,7 @@ declare module "react-native-maps" {
     lineDashPattern?: number[];
   }
 
-  export class Circle extends React.Component<MapCircleProps, any> { }
+  export class Circle extends React.Component<MapCircleProps, any> {}
 
   // =======================================================================
   //  UrlTile & LocalTile
@@ -428,7 +428,7 @@ declare module "react-native-maps" {
     tileSize?: number;
   }
 
-  export class UrlTile extends React.Component<MapUrlTileProps, any> { }
+  export class UrlTile extends React.Component<MapUrlTileProps, any> {}
 
   export interface MapLocalTileProps extends ViewProperties {
     pathTemplate: string;
@@ -436,7 +436,7 @@ declare module "react-native-maps" {
     zIndex?: number;
   }
 
-  export class LocalTile extends React.Component<MapLocalTileProps, any> { }
+  export class LocalTile extends React.Component<MapLocalTileProps, any> {}
 
   // =======================================================================
   //  Overlay
@@ -449,9 +449,9 @@ declare module "react-native-maps" {
     bounds: [Coordinate, Coordinate];
   }
 
-  export class Overlay extends React.Component<MapOverlayProps, any> { }
+  export class Overlay extends React.Component<MapOverlayProps, any> {}
 
-  export class OverlayAnimated extends Overlay { }
+  export class OverlayAnimated extends Overlay {}
 
   // =======================================================================
   //  Constants
