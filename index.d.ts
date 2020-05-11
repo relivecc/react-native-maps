@@ -125,6 +125,7 @@ declare module "react-native-maps" {
         timestamp: number;
         accuracy: number;
         speed: number;
+        heading: number;
         isFromMockProvider: boolean;
       };
     };
@@ -163,6 +164,21 @@ declare module "react-native-maps" {
     position: Point;
   };
 
+  export type IndoorBuilding = {
+    underground: boolean,
+    activeLevelIndex: number,
+    levels: Array<IndoorLevel>,
+  }
+
+  export type IndoorLevel = {
+    index: number,
+    name: string,
+    shortName: string,
+  }
+
+  export interface IndoorBuildingEvent 
+    extends NativeSyntheticEvent<{IndoorBuilding:IndoorBuilding}> {}
+
   /**
    * onKmlReady parameter
    */
@@ -170,28 +186,20 @@ declare module "react-native-maps" {
     extends NativeSyntheticEvent<{ markers: KmlMarker[] }> {}
 
   type MapTypes =
-    | AndroidMapTypes
-    | IOSMapTypes
-    | 'none';
-
-  type AndroidMapTypes =
-    | 'standard'
-    | 'satellite'
-    | 'hybrid'
-    | 'terrain';
-
-  type IOSMapTypes =
-    | 'standard'
-    | 'satellite'
-    | 'hybrid'
-    | 'satelliteFlyover'
-    | 'hybridFlyover'
-    | 'mutedStandard';
+    | "standard"
+    | "satellite"
+    | "hybrid"
+    | "terrain"
+    | "none"
+    | "mutedStandard";
 
   export interface MapViewProps extends ViewProperties {
-    provider?: "google" | "osmdroid" | null;
+    provider?: "google" | null;
     customMapStyle?: MapStyleElement[];
     customMapStyleString?: string;
+    userLocationPriority?: "balanced" | "high" | "low" | "passive";
+    userLocationUpdateInterval?: number;
+    userLocationFastestInterval?: number;
     showsUserLocation?: boolean;
     userLocationAnnotationTitle?: string;
     showsMyLocationButton?: boolean;
@@ -199,6 +207,7 @@ declare module "react-native-maps" {
     showsPointsOfInterest?: boolean;
     showsCompass?: boolean;
     zoomEnabled?: boolean;
+    zoomTapEnabled?: boolean;
     zoomControlEnabled?: boolean;
     rotateEnabled?: boolean;
     cacheEnabled?: boolean;
@@ -221,15 +230,18 @@ declare module "react-native-maps" {
     initialCamera?: Camera;
     liteMode?: boolean;
     mapPadding?: EdgePadding;
+    paddingAdjustmentBehavior?: "always" | "automatic" | "never";
     maxDelta?: number;
     minDelta?: number;
     legalLabelInsets?: EdgeInsets;
+    compassOffset?: { x: number; y: number };
 
     onMapReady?: () => void;
     onKmlReady?: (values: KmlMapEvent) => void;
     onRegionChange?: (region: Region) => void;
     onRegionChangeComplete?: (region: Region) => void;
     onPress?: (event: MapEvent) => void;
+    onDoublePress?: (event: MapEvent) => void;
     onLongPress?: (event: MapEvent) => void;
     onUserLocationChange?: (event: EventUserLocation) => void;
     onPanDrag?: (event: MapEvent) => void;
@@ -247,6 +259,7 @@ declare module "react-native-maps" {
     onMarkerDragStart?: (event: MapEvent) => void;
     onMarkerDrag?: (event: MapEvent) => void;
     onMarkerDragEnd?: (event: MapEvent) => void;
+    onIndoorBuildingFocused?: (event: IndoorBuildingEvent) => void; 
 
     minZoomLevel?: number;
     maxZoomLevel?: number;
@@ -277,8 +290,11 @@ declare module "react-native-maps" {
       options?: { edgePadding?: EdgePadding; animated?: boolean }
     ): void;
     setMapBoundaries(northEast: LatLng, southWest: LatLng): void;
-    getMapBoundaries(): { northEast: LatLng; southWest: LatLng };
+    getMapBoundaries(): Promise<{ northEast: LatLng; southWest: LatLng }>;
     takeSnapshot(options?: SnapshotOptions): Promise<string>;
+    pointForCoordinate(coordinate: LatLng): Promise<Point>;
+    coordinateForPoint(point: Point): Promise<LatLng>;
+    setIndoorActiveLevelIndex(index:number): void;
   }
 
   export class MapViewAnimated extends MapView {}
@@ -293,6 +309,7 @@ declare module "react-native-maps" {
     title?: string;
     description?: string;
     image?: ImageURISource | ImageRequireSource;
+    icon?: ImageURISource | ImageRequireSource;
     opacity?: number;
     pinColor?: string;
     coordinate: LatLng | AnimatedRegion;
@@ -331,6 +348,16 @@ declare module "react-native-maps" {
      */
     hideCallout(): void;
     /**
+     * Redraws the callout for this marker
+     * __iOS only__
+     */
+    redrawCallout(): void;
+    /**
+     * Causes a redraw of the marker. Useful when there are updates to the 
+     * marker and `tracksViewChanges` comes with a cost that is too high.
+     */
+    redraw(): void
+    /**
      * Animates marker movement.
      * __Android only__
      */
@@ -349,6 +376,19 @@ declare module "react-native-maps" {
   }
 
   export class Callout extends React.Component<MapCalloutProps, any> {}
+
+  // =======================================================================
+  //  CalloutSubview
+  // =======================================================================
+
+  export interface MapCalloutSubviewProps extends ViewProperties {
+    onPress?: (event: MapEvent<{ action: "callout-inside-press" }>) => void;
+  }
+
+  export class CalloutSubview extends React.Component<
+    MapCalloutSubviewProps,
+    any
+  > {}
 
   // =======================================================================
   //  Polyline
@@ -423,9 +463,12 @@ declare module "react-native-maps" {
 
   export interface MapUrlTileProps extends ViewProperties {
     urlTemplate: string;
+    minimumZ?: number;
     maximumZ?: number;
     zIndex?: number;
     tileSize?: number;
+    shouldReplaceMapContent?:boolean;
+    flipY?: boolean;
   }
 
   export class UrlTile extends React.Component<MapUrlTileProps, any> {}
@@ -434,10 +477,25 @@ declare module "react-native-maps" {
     pathTemplate: string;
     tileSize?: number;
     zIndex?: number;
+    flipY?: boolean;
   }
 
   export class LocalTile extends React.Component<MapLocalTileProps, any> {}
 
+  // =======================================================================
+  //  WMSTile
+  // =======================================================================
+
+  export interface MapWMSTileProps extends ViewProperties {
+    urlTemplate: string;
+    maximumZ?: number;
+    minimumZ?: number;
+    tileSize: number;
+    opacity: number;
+    zIndex?: number;
+  }
+
+  export class WMSTile extends React.Component<MapWMSTileProps, any> {}
   // =======================================================================
   //  Overlay
   // =======================================================================
@@ -447,11 +505,51 @@ declare module "react-native-maps" {
   export interface MapOverlayProps extends ViewProperties {
     image?: ImageURISource | ImageRequireSource;
     bounds: [Coordinate, Coordinate];
+    tappable?: boolean;
+    onPress?: (event: MapEvent<{ action: "overlay-press"; }>) => void;
   }
 
   export class Overlay extends React.Component<MapOverlayProps, any> {}
 
   export class OverlayAnimated extends Overlay {}
+
+  // =======================================================================
+  //  Heatmap
+  // =======================================================================
+
+  export interface WeightedLatLng {
+    latitude: number;
+    longitude: number;
+    weight?: number;
+  }
+
+  export interface MapHeatmapProps extends ViewProperties {
+    points: WeightedLatLng[];
+    gradient?: {
+      colors: string[],
+      startPoints: number[],
+      colorMapSize: number
+    }
+    radius?: number;
+    opacity?: number;
+  }
+
+  export class Heatmap extends React.Component<MapHeatmapProps, any> {}
+
+  // =======================================================================
+  //  Geojson
+  // =======================================================================
+
+  import GeoJSON from 'geojson';
+
+  export interface GeojsonProps {
+    geojson: GeoJSON.GeoJSON;
+    strokeColor?: string;
+    fillColor?: string;
+    strokeWidth?: number;
+  }
+
+  export class Geojson extends React.Component<GeojsonProps, any> {}
 
   // =======================================================================
   //  Constants
@@ -460,9 +558,7 @@ declare module "react-native-maps" {
   export const MAP_TYPES: {
     STANDARD: MapTypes;
     SATELLITE: MapTypes;
-    SATELLITE_FLYOVER: MapTypes;
     HYBRID: MapTypes;
-    HYBRID_FLYOVER: MapTypes;
     TERRAIN: MapTypes;
     NONE: MapTypes;
     MUTEDSTANDARD: MapTypes;
@@ -470,5 +566,4 @@ declare module "react-native-maps" {
 
   export const PROVIDER_DEFAULT: null;
   export const PROVIDER_GOOGLE: "google";
-  export const PROVIDER_OSMDROID: "osmdroid";
 }

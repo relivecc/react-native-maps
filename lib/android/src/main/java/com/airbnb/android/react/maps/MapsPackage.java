@@ -40,57 +40,36 @@ public class MapsPackage implements ReactPackage {
 
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
+    AirMapCalloutManager calloutManager = new AirMapCalloutManager();
+    AirMapMarkerManager annotationManager = new AirMapMarkerManager();
+    AirMapPolylineManager polylineManager = new AirMapPolylineManager(reactContext);
+    AirMapGradientPolylineManager gradientPolylineManager = new AirMapGradientPolylineManager(reactContext);
+    AirMapPolygonManager polygonManager = new AirMapPolygonManager(reactContext);
+    AirMapCircleManager circleManager = new AirMapCircleManager(reactContext);
+    AirMapManager mapManager = new AirMapManager(reactContext);
+    AirMapLiteManager mapLiteManager = new AirMapLiteManager(reactContext);
+    AirMapUrlTileManager urlTileManager = new AirMapUrlTileManager(reactContext);
+    AirMapWMSTileManager gsUrlTileManager = new AirMapWMSTileManager(reactContext);
+    AirMapLocalTileManager localTileManager = new AirMapLocalTileManager(reactContext);
+    AirMapOverlayManager overlayManager = new AirMapOverlayManager(reactContext);
+    AirMapHeatmapManager heatmapManager = new AirMapHeatmapManager();
+    mapManager.setMarkerManager(annotationManager);
 
-    List<ViewManager> managers = new ArrayList<>();
-
-    if (hasGoogleMapsOnClasspath()) {
-      AirMapCalloutManager calloutManager = new AirMapCalloutManager();
-      AirMapMarkerManager annotationManager = new AirMapMarkerManager();
-      AirMapPolylineManager polylineManager = new AirMapPolylineManager(reactContext);
-      AirMapPolygonManager polygonManager = new AirMapPolygonManager(reactContext);
-      AirMapCircleManager circleManager = new AirMapCircleManager(reactContext);
-      AirMapManager mapManager = new AirMapManager(reactContext);
-      AirMapLiteManager mapLiteManager = new AirMapLiteManager(reactContext);
-      AirMapUrlTileManager urlTileManager = new AirMapUrlTileManager(reactContext);
-      AirMapLocalTileManager localTileManager = new AirMapLocalTileManager(reactContext);
-      AirMapOverlayManager overlayManager = new AirMapOverlayManager(reactContext);
-
-      List<ViewManager> airMapManagers = Arrays.<ViewManager>asList(
-              calloutManager,
-              annotationManager,
-              polylineManager,
-              polygonManager,
-              circleManager,
-              mapManager,
-              mapLiteManager,
-              urlTileManager,
-              localTileManager,
-              overlayManager
-      );
-      managers.addAll(airMapManagers);
-    }
-
-    if (hasOsmdroidOnClasspath()) {
-      OsmMapCalloutManager osmCalloutManager = new OsmMapCalloutManager();
-      OsmMapMarkerManager osmMarkerManager = new OsmMapMarkerManager();
-      OsmMapPolylineManager osmPolylineManager = new OsmMapPolylineManager(reactContext);
-      OsmMapPolygonManager osmPolygonManager = new OsmMapPolygonManager(reactContext);
-      OsmMapCircleManager osmMapCircleManager = new OsmMapCircleManager(reactContext);
-      OsmMapManager osmMapManager = new OsmMapManager(reactContext);
-      OsmMapUrlTileManager osmUrlTileManager = new OsmMapUrlTileManager();
-
-      managers.addAll(Arrays.<ViewManager>asList(
-          osmCalloutManager,
-          osmMarkerManager,
-          osmPolylineManager,
-          osmPolygonManager,
-          osmMapCircleManager,
-          osmMapManager,
-          osmUrlTileManager
-      ));
-    }
-
-    return managers;
+    return Arrays.<ViewManager>asList(
+        calloutManager,
+        annotationManager,
+        polylineManager,
+        gradientPolylineManager,
+        polygonManager,
+        circleManager,
+        mapManager,
+        mapLiteManager,
+        urlTileManager,
+        gsUrlTileManager,
+        localTileManager,
+        overlayManager,
+        heatmapManager
+    );
   }
 
   private boolean hasOsmdroidOnClasspath() {
